@@ -6,6 +6,7 @@ import { Button, Modal, ModalBody, ModalHeader, Label, Row, Col } from "reactstr
 import { Control, LocalForm, Errors } from 'react-redux-form';
 import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
 
 const required = (val) => val && val.length; //value > 0
 const maxLength = (len) => (val) => !(val) || (val.length <= len);
@@ -130,6 +131,10 @@ class CommentForm extends Component {
     function RenderDish({dish}) {
       if (dish != null) {
         return(
+          <FadeTransform in 
+            transformProps={{
+                exitTransform: 'scale(0.5) translateY(-50%)'
+            }}>
           <Card>
             <CardImg width='100%' src={baseUrl + dish.image} alt={dish.name} />
             <CardBody>
@@ -137,6 +142,7 @@ class CommentForm extends Component {
               <CardText>{dish.description}</CardText>
             </CardBody>
           </Card>
+          </FadeTransform>
         );  
       }
       else {
@@ -149,10 +155,14 @@ class CommentForm extends Component {
     function RenderComments({comments, postComment, dishId}) {
 
       if (comments != null) {
+        
         let list = comments.map((comment) => {
           return(
+            <Stagger in>    
+              <Fade in>
             <li key={comment.id}>
             <div>
+              
               <p>{comment.comment}</p>
               <p>--{comment.author},
                     &nbsp;
@@ -163,8 +173,11 @@ class CommentForm extends Component {
                     }).format(new Date(comment.date))}</p>
             </div>
           </li>
+          </Fade>
+          </Stagger>
           )
         });
+        
         return(
           <div className='col-12 col-md m-1'>
             <h4>Comments</h4>
