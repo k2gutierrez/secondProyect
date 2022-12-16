@@ -1,23 +1,44 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { Loading } from "./LoadingComponent";
+import { baseUrl } from "../shared/baseUrl";
+import { Fade, Stagger } from 'react-animation-components';
+
+function RenderLeader ({leader}) {
+    return (
+
+        <div key={leader.id} className='row mt-5'>
+            <div className='col-12 col-md-2'>
+                <img src={baseUrl + leader.image} alt={leader.name}></img>
+            </div>
+            <div className='col-12 col-md-10'>
+                <h5>{ leader.name }</h5>
+                <p>{ leader.designation }</p>
+                <p>{ leader.description }</p>
+            </div>
+        </div>
+    );
+}
+
+function RenderContent({ leaders, isLoading, errMess }) {
+    if (isLoading) {
+        return <Loading />;
+    } else if (errMess) {
+        return <h4>{errMess}</h4>;
+    } else
+        return (
+            <Stagger in>
+                {leaders.map(leader => (
+                    <Fade in key={leader.id}>
+                        <RenderLeader key={leader.id} leader={leader} />
+                    </Fade>
+                ))}
+            </Stagger>
+        );
+}
 
 function About(props) {
-
-    const leaders = props.leaders.map((leader) => {
-        return (
-            <div key={leader.id} className='row mt-5'>
-                <div className='col-12 col-md-2'>
-                    <img src={leader.image} alt={leader.name}></img>
-                </div>
-                <div className='col-12 col-md-10'>
-                    <h5>{ leader.name }</h5>
-                    <p>{ leader.designation }</p>
-                    <p>{ leader.description }</p>
-                </div>
-            </div>
-        );
-    });
 
     return(
         <div className="container">
@@ -79,7 +100,11 @@ function About(props) {
                 </div>
                 <div className="col-12">
                     <div className='list'>
-                        {leaders}
+                        <RenderContent
+                            leaders={props.leaders}
+                            isLoading={props.leaderLoading}
+                            errMess={props.leaderErrMess}
+                        />  
                     </div>
                 </div>
             </div>
